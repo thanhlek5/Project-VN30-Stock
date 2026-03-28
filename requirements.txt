@@ -1,0 +1,18 @@
+# --- CORE DATA LIBRARIES ---
+vnstock         # Thư viện chính lấy dữ liệu chứng khoán
+pandas          # Xử lý bảng dữ liệu
+numpy           # Tính toán số học
+
+# --- BIG DATA & DATABASE ---
+pyspark==3.5.0  # Khớp với phiên bản Spark Cluster của Lá
+hdfs            # Kết nối và đẩy dữ liệu lên Hadoop HDFS
+psycopg2-binary # Driver kết nối Postgres (bản binary cho dễ cài)
+sqlalchemy      # Toolkit SQL cho Python
+
+# --- ORCHESTRATION & UTILS ---
+apache-airflow-providers-apache-spark # Giúp Airflow gọi Spark Job
+ipykernel       # Cần thiết để chạy Notebook trong VS Code/Jupyter
+
+# --- VISUALIZATION (Cho Streamlit) ---
+streamlit       # Làm Dashboard UI
+plotly          # Vẽ biểu đồ nến (Candlestick) chuyên nghiệp

@@ -9,6 +9,10 @@ RUN apt-get update && apt-get install -y openjdk-11-jdk && apt-get clean
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 ENV PATH="${PATH}:/home/airflow/.local/bin"
 
+# Tạo thư mục data và cấp quyền cho airflow user
+RUN mkdir -p /opt/airflow/data/raw /opt/airflow/data/process /opt/airflow/data/sample \
+    && chmod -R 777 /opt/airflow/data
+
 USER airflow
 # Cài các thư viện vnstock, pyspark...
 RUN pip install --no-cache-dir vnstock pyspark==3.5.0 hdfs psycopg2-binary
