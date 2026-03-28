@@ -7,7 +7,7 @@ Nên chọn cách đơn giản hơn sẽ độc lập đc cả 4 máy và không
 
 
 **cấu trúc thư mục**
-
+```text
 project_bigdata/
 ├── docker/                         # Chứa cấu hình Docker cho từng dịch vụ
 │   ├── airflow/
@@ -45,7 +45,7 @@ project_bigdata/
 ├── README.md
 ├── requirements.txt                # Danh sách thư viện Python
 └── SETUP.md
-
+```
 Lưu ý hãy tạo thư mục giống cấu trúc trên để có thể chạy docker compose. 
 
 **Các bước setup**
