@@ -1,6 +1,8 @@
 **Giới thiệu**
 Vì đây là dự án Big data và có sử dụng các công cụ như Hadoop và spark. Thì đây là các công cụ lưu trữ và xử lý dữ liệu phân tán. 
+
 Ta có thể cấu hình lại để có thể phân tán và sử  lý dữ liệu cho 4 máy. Nhưng Ta sẽ làm theo hướng đơn giản hơn là không config để  phân tán mà sẽ có 1 máy chứ toàn bộ dữ liệu và 3 mấy kia sẽ chỉ lấy 1 phần để làm và sẽ dùng docker-compose để  tạo env giống nhau để  tránh conflict về  version cho sau này. 
+
 **tại sao lại chọn hướng này** 
 Vì nếu theo hướng config cho phân tán thì sẽ phải có 1 cluster để  điều hướng cho 3 workers như thế sẽ mất đi m máy để điều phối làm giảm đi số lượng phần cấn và nếu rơi vào trường hợp cả 3 cluster để  tắt máy thì coi như là đóng băng luôn toàn bộ quy trình. 
 Nên chọn cách đơn giản hơn sẽ độc lập đc cả 4 máy và không mất một máy nào làm điều phối. 
@@ -49,6 +51,7 @@ project_bigdata/
 Lưu ý hãy tạo thư mục giống cấu trúc trên để có thể chạy docker compose. 
 
 **Các bước setup**
+
 vào thư mục project và gõ lệnh:
 ```docker
 docker compose up -build  
@@ -57,7 +60,7 @@ Sau khi đợi cho các containers được khởi tạo ta chỉ cần gõ:
 ```
 docker compose up -d
 ```
-Là có thể khởi đông các containers 
+Là có thể khởi động các containers 
 
 Nếu muốn tắt và xóa các containers ta có thể gõ:
 ```
