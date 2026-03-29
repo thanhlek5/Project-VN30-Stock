@@ -46,25 +46,66 @@ Dữ liệu được lấy từ thư viện vnstock, bao gồm lịch sử giá 
 
 ## 5. Stored layers in HDFS: 
 
-### Các layers: 
-- Bronze layer: Đây là dữ liệu gốc được lấy trực tiếp từ api của Vnstock. Được lưu ở định dạng csv và mỗi mã sẽ là 1 file csv khác nhau. 
-- Silver layer: Đây sẽ là nơi chưa dữ liệu đã được làm sạch, xử lý và đã conver qua định dạng parquet. 
-- Gold layer: Là những dữ liệu đã được làm sạch và sẵn sàng để xử lý, phân tích cho các tasks của business. 
+### Medallion Architecture: 
+- **Bronze layer**: Đây là dữ liệu gốc được lấy trực tiếp từ api của Vnstock. Được lưu ở định dạng csv và mỗi mã sẽ là 1 file csv khác nhau. 
+- **Silver layer**: Đây sẽ là nơi chưa dữ liệu đã được làm sạch, xử lý và đã conver qua định dạng parquet. 
+- **Gold layer**: Là những dữ liệu đã được làm sạch và sẵn sàng để xử lý, phân tích cho các tasks của business. 
 
 Ba layers trên đều sẽ được lưu trữ trên hdfs của apache hadoop 
 
-ta sẽ tạo thêm database postgresql để đẩy dữ liệu trên Gold layer về  để  tránh trường họp chậm tronng việc lấy dữ liệu trực tiếp trên hdfs. Quan trọng hơn hết là dễ  đê tạo dashbroad hơn. 
+ta sẽ tạo thêm database postgresql để đẩy dữ liệu trên Gold layer về  để  tránh trường hợp chậm trong việc lấy dữ liệu trực tiếp trên hdfs. Quan trọng hơn hết là để  tạo dashbroad hơn. 
 
+### Bronze layer: 
 
+Ở phần xử lý layer này, thì api từ vnstock đã rất chất lượng khi những dữ liệu được gọi đã gần như hoàn toàn sạch sẽ và ổn định. ở đây ta chỉ cần xử lý nhẹ ở phần liểu dữ liệu ở từng cột mà thôi. Ban đầu các côt đều là `string` nên cần được đổi thành kiểu dữ liệu phù hợp. 
 
+**Trước khi đổi:**
+```
+root
+ |-- time: string (nullable = true)
+ |-- open: string (nullable = true)
+ |-- high: string (nullable = true)
+ |-- low: string (nullable = true)
+ |-- close: string (nullable = true)
+ |-- volume: string (nullable = true)
+```
+**Sau khi đổi:**
+```
+root
+ |-- time: date (nullable = true)
+ |-- open: double (nullable = true)
+ |-- high: double (nullable = true)
+ |-- low: double (nullable = true)
+ |-- close: double (nullable = true)
+ |-- volume: long (nullable = true)
+```
 
+Ngoài ra ta sẽ kiểm tra thêm độ hợp lý của dữ liệu: 
 
+- Xem có giá nào bé hơn 0 không: 
+```python
+# Giá âm hoặc bằng 0
+data_raw.filter("close <= 0 OR open <= 0 OR high <= 0 OR low <= 0").show()
 
+# ouput 
++----+----+----+---+-----+------+
+|time|open|high|low|close|volume|
++----+----+----+---+-----+------+
++----+----+----+---+-----+------+
 
+```
+- Xem có cột vào volume âm không: 
+```python
+# Volume âm
+data_raw.filter("volume < 0").show()
 
-
-
-
+# output
++----+----+----+---+-----+------+
+|time|open|high|low|close|volume|
++----+----+----+---+-----+------+
++----+----+----+---+-----+------+
+```
+- Xem có có cột nào high < low không:
 
 
 
