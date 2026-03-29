@@ -54,7 +54,7 @@ Lưu ý hãy tạo thư mục giống cấu trúc trên để có thể chạy d
 
 vào thư mục project và gõ lệnh:
 ```docker
-docker compose up -build  
+docker compose up --build  
 ```
 Sau khi đợi cho các containers được khởi tạo ta chỉ cần gõ:
 ```
