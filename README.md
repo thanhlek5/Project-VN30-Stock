@@ -16,7 +16,7 @@ Hệ thống được thiết kế theo kiến trúc Layered Architecture, đả
 1. Ingestion Layer: Thu thập dữ liệu từ "Vnstock" API qua các Python scripts.
 2. Storage Layer: Lưu trữ dữ liệu thô (Raw) và dữ liệu đã xử lý (Processed) trên cụm Hadoop HDFS.
 3. Processing Layer: Sử dụng Apache Spark (PySpark) để thực hiện Feature Engineering và tính toán chỉ số.
-4. Serving Layer: Flask API truy xuất dữ liệu từ PostgreSQL (Metadata) và HDFS.
+4. Serving Layer: streamlit API truy xuất dữ liệu từ PostgreSQL (Metadata) và HDFS.
 5. Visualization Layer: Dashboard trực quan hóa biểu đồ nến và các chỉ báo kỹ thuật.
 
 ## 3. Công nghệ sử dụng (Technology Stack)
@@ -35,15 +35,25 @@ Hệ thống được thiết kế theo kiến trúc Layered Architecture, đả
 Dữ liệu được lấy từ thư viện vnstock, bao gồm lịch sử giá của 30 mã cổ phiếu thuộc nhóm VN30.
 
 ### Schema dữ liệu thô (Raw Schema)
-- symbol(**String**): Mã chứng khoán (ví dụ: VNM, VIC).
 - date(**Date**): Ngày giao dịch.
-- open/high/low/close(**Float**): Giá mở/cao/thấp/đóng cửa.
+- open/high/low/close(**Double**): Giá mở/cao/thấp/đóng cửa.
 - volume(**Long**): Khối lượng giao dịch.
 
 ### Xử lý & Định dạng
 - Định dạng: Dữ liệu được lưu dưới dạng **Parquet** để tối ưu tốc độ đọc/ghi và nén dung lượng trên HDFS.
 - Phân vùng (Partitioning): Dữ liệu được phân vùng theo **symbol** và **year** để tăng tốc độ truy vấn.
 - Đặc tính Big Data: Hệ thống có khả năng xử lý hàng triệu dòng dữ liệu lịch sử của nhiều mã chứng khoán cùng lúc nhờ cơ chế song song hóa của Spark.
+
+## 5. Stored layers in HDFS: 
+
+### Các layers: 
+- Bronze layer: Đây là dữ liệu gốc được lấy trực tiếp từ api của Vnstock. Được lưu ở định dạng csv và mỗi mã sẽ là 1 file csv khác nhau. 
+- Silver layer: Đây sẽ là nơi chưa dữ liệu đã được làm sạch, xử lý và đã conver qua định dạng parquet. 
+- Gold layer: Là những dữ liệu đã được làm sạch và sẵn sàng để xử lý, phân tích cho các tasks của business. 
+
+Ba layers trên đều sẽ được lưu trữ trên hdfs của apache hadoop 
+
+ta sẽ tạo thêm database postgresql để đẩy dữ liệu trên Gold layer về  để  tránh trường họp chậm tronng việc lấy dữ liệu trực tiếp trên hdfs. Quan trọng hơn hết là dễ  đê tạo dashbroad hơn. 
 
 
 
