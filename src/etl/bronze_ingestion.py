@@ -5,6 +5,7 @@ from datetime import datetime
 import os
 import logging
 
+
 # --- CẤU HÌNH LOGGING ---
 logging.basicConfig(
     level=logging.INFO, 
@@ -85,6 +86,8 @@ def ingest_to_bronze(symbols):
                 
         except Exception as e:
             logger.error(f" Lỗi khi xử lý mã {symbol}: {str(e)}")
+
+
 
 if __name__ == "__main__":
     logger.info(f"=== BẮT ĐẦU QUY TRÌNH KÉO DỮ LIỆU VN30 (TỪ {START_DATE}) ===")
