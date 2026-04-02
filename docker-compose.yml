@@ -178,6 +178,25 @@ services:
     networks:
       - vn30_net
 
+  # ================= ETL TOOLS (chạy thủ công) =================
+  bronze-ingestion:
+    build:
+      context: .
+      dockerfile: docker/etl/Dockerfile
+    container_name: bronze-ingestion
+    profiles:
+      - tools
+    environment:
+      - HDFS_URL=http://namenode:9870
+      - HADOOP_USER_NAME=root
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+    depends_on:
+      - namenode
+    networks:
+      - vn30_net
+
 networks:
   vn30_net:
     name: ${PROJECT_NAME}_network

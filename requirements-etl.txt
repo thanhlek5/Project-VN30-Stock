@@ -1,0 +1,4 @@
+# Requirements riêng cho ETL Bronze Ingestion
+vnstock
+pandas
+hdfs
