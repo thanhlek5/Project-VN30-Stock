@@ -6,6 +6,7 @@ numpy           # Tính toán số học
 # --- BIG DATA & DATABASE ---
 pyspark==3.5.0  # Khớp với phiên bản Spark Cluster của Lá
 hdfs            # Kết nối và đẩy dữ liệu lên Hadoop HDFS
+pyarrow         # Đọc/ghi Parquet (Bronze/Silver layer)
 psycopg2-binary # Driver kết nối Postgres (bản binary cho dễ cài)
 sqlalchemy      # Toolkit SQL cho Python
 
