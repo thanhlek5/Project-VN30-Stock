@@ -67,3 +67,12 @@ Nếu muốn tắt và xóa các containers ta có thể gõ:
 docker compose down 
 ```
 muốn mở lại thì cứ gõ lệnh `docker compose up -d` không cần phải build lại từ đầu. 
+
+Lệnh để vào postgresql trên docker: 
+```
+docker exec -it postgres psql -U admin -d vn30_db
+```
+sửa lại file init.sql 
+```
+docker exec -i postgres psql -U admin -d vn30_db < docker/postgres/init.sql
+```

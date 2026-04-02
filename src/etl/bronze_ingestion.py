@@ -6,6 +6,7 @@ import os
 import logging
 import time
 
+
 # --- CẤU HÌNH LOGGING ---
 logging.basicConfig(
     level=logging.INFO,
@@ -168,6 +169,7 @@ def push_local_to_hdfs(fetched_files: list) -> dict:
             result["failed"].append(symbol)
             logger.warning(f"  ✗ {symbol}: Push HDFS thất bại (file local vẫn còn): {e}")
 
+<<<<<<< HEAD
     # --- Báo cáo ---
     total = len(fetched_files)
     ok    = len(result["success"])
@@ -182,6 +184,10 @@ def push_local_to_hdfs(fetched_files: list) -> dict:
 # ===========================================================
 #  ENTRY POINT
 # ===========================================================
+=======
+
+
+>>>>>>> 637ac251a6a8ee26bf2f6b04449215618d9dff52
 if __name__ == "__main__":
     logger.info(f"=== BẮT ĐẦU QUY TRÌNH KÉO DỮ LIỆU VN30 (TỪ {START_DATE} → {END_DATE}) ===")
 
