@@ -175,26 +175,114 @@ Ta sẽ xử lý những điều sau:
 ### Gold layer: 
 ở phần này ta cần phải xác đinh được Business Requirements là gì ? 
 
-#### Business Requirement 1: 
-Xem xét độ tăng trưởng của các cổ phiếu trong nhóm VN30. 
-- Dùng để xem mã nào tăng/giảm mạnh nhất 
-- xu hướng ngắn hạn của mã (1 ngày/ 1 tuần)
-#### Business Requirement 2: 
-Phân tích số lượng mua mã trong ngaỳ hôm đó. 
-xác định: 
-- Xem giá tăng có real không.
-- xem có volume nào bất thường không.
-#### Business Requirement 3: 
-Phân tích và xem xu hướng của cổ phiếu. 
-xác định cổ phiếu:  
--  Đang có uptrend/downtrend không 
-- có bị overbought không. 
+#### 2. Requirement: Tăng trưởng (Price Change)
 
+**Mục tiêu**  
+Giúp người dùng xác định:
+- Mã cổ phiếu tăng mạnh nhất / giảm mạnh nhất
+- Xu hướng ngắn hạn theo ngày và tuần
 
+**Logic**  
+So sánh giá đóng cửa hiện tại với các mốc lịch sử:
+- T-1 (hôm qua)
+- T-7 (7 ngày trước)
 
+**Các cột trong Gold Layer** 
 
+```python
+price_diff_pct_1d = (close_t - close_t-1) / close_t-1
 
+price_diff_pct_1w = (close_t - close_t-7) / close_t-7
+```
 
+**Lưu ý**
+- Nếu không có dữ liệu quá khứ (ví dụ ngày đầu), giá trị sẽ là NULL
+
+**Dashboard**
+- Bảng xếp hạng Top Gainers / Losers
+- Biểu đồ cột (Bar Chart) theo % thay đổi
+
+---
+
+#### 3. Requirement: Sự sôi động (Volume Analysis)
+
+**Mục tiêu**  
+Xác định mức độ tham gia của dòng tiền:
+- Giá tăng/giảm có được hỗ trợ bởi khối lượng lớn hay không
+- Phát hiện các phiên có khối lượng bất thường
+
+**Logic**  
+So sánh khối lượng giao dịch hiện tại với trung bình 20 phiên gần nhất
+
+**Các cột trong Gold Layer**
+```python 
+avg_volume_20d = AVG(volume) trong 20 ngày gần nhất
+
+volume_vs_avg_20d = volume_t / avg_volume_20d
+```
+#### 4. Requirement: Vị thế kỹ thuật (Price Position)
+
+**Mục tiêu**  
+Giúp xác định xu hướng hiện tại của cổ phiếu:
+- Đang trong xu hướng tăng hay giảm
+- Khoảng cách so với xu hướng trung bình
+
+**Logic**  
+So sánh giá đóng cửa với đường trung bình động 20 ngày (MA20)
+
+```python 
+ma20 = AVG(close) trong 20 ngày gần nhất
+
+above_ma20 = close_t > ma20
+
+dist_from_ma20 = (close_t - ma20) / ma20
+```
+
+**Diễn giải**
+- above_ma20 = true → xu hướng tăng
+- above_ma20 = false → xu hướng giảm
+- dist_from_ma20 càng lớn → giá càng lệch khỏi trung bình (có thể overbought)
+
+**Dashboard**
+- Cards: tỷ lệ cổ phiếu trên MA20
+- Filter: lọc các cổ phiếu đang trong xu hướng tăng
+
+---
+
+#### 5. Schema đề xuất cho Gold Layer
+
+```
+time
+symbol
+open
+high
+low
+close
+volume
+invalid
+month
+year
+day
+
+price_diff_pct_1d
+price_diff_pct_1w
+
+volume_vs_avg_20d
+
+ma20
+above_ma20
+dist_from_ma20
+```
+
+---
+
+#### 6. Nguyên tắc thiết kế Gold Layer
+
+- Giữ nguyên toàn bộ cột từ Silver Layer
+- Chỉ bổ sung thêm các cột đã được tính toán
+- Không để dashboard tự tính toán lại logic
+- Dữ liệu phải sẵn sàng để sử dụng trực tiếp cho BI và visualization
+- Tối ưu cho truy vấn và đọc dữ liệu nhanh (parquet, partition theo symbol)
 
 
 

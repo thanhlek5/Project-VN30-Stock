@@ -72,3 +72,7 @@ Lệnh để vào postgresql trên docker:
 ```
 docker exec -it postgres psql -U admin -d vn30_db
 ```
+sửa lại file init.sql 
+```
+docker exec -i postgres psql -U admin -d vn30_db < docker/postgres/init.sql
+```
