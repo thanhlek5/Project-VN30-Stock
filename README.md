@@ -21,7 +21,7 @@ Hệ thống được thiết kế theo kiến trúc Layered Architecture, đả
 
 ## 3. Công nghệ sử dụng (Technology Stack)
 
-- Ngôn ngữ chính: Python 3.12
+- Ngôn ngữ chính: Python 3.10
 - Lưu trữ (Data Lake): Hadoop HDFS 3.3.4
 - Xử lý dữ liệu (Big Data): Apache Spark 3.5.0 (PySpark)
 - Điều phối (Orchestration): Apache Airflow 2.8.1 / Cron Jobs
