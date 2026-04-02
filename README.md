@@ -56,7 +56,10 @@ Ba layers trên đều sẽ được lưu trữ trên hdfs của apache hadoop
 ta sẽ tạo thêm database postgresql để đẩy dữ liệu trên Gold layer về  để  tránh trường hợp chậm trong việc lấy dữ liệu trực tiếp trên hdfs. Quan trọng hơn hết là để  tạo dashbroad hơn. 
 
 ### Bronze layer: 
+Đây là nơi lưu những dữ liệu gốc chưa qua xử lý và sửa đổi gì cả. 
 
+
+### Silver layer:
 Ở phần xử lý layer này, thì api từ vnstock đã rất chất lượng khi những dữ liệu được gọi đã gần như hoàn toàn sạch sẽ và ổn định. ở đây ta chỉ cần xử lý nhẹ ở phần liểu dữ liệu ở từng cột mà thôi. Ban đầu các côt đều là `string` nên cần được đổi thành kiểu dữ liệu phù hợp. 
 
 **Trước khi đổi:**
@@ -164,13 +167,33 @@ data_raw.filter("volume < 0").show()
 |2019-10-15|20.88|20.88|20.74|20.74| 663910|  0|
 +----------+-----+-----+-----+-----+-------+---+
 ```
+Tóm Tắt: 
+Ta sẽ xử lý những điều sau: 
+- Đổi kiểu dữ liệu của từng cột. 
+- Tạo cột `invalid` để đánh dấu những ngày dữ liệu không hợp lý 
+- tách cột `time` ra thành các cột rõ hơn `month`, `year`, `day`.
+### Gold layer: 
+ở phần này ta cần phải xác đinh được Business Requirements là gì ? 
+
+#### Business Requirement 1: 
+Xem xét độ tăng trưởng của các cổ phiếu trong nhóm VN30. 
+- Dùng để xem mã nào tăng/giảm mạnh nhất 
+- xu hướng ngắn hạn của mã (1 ngày/ 1 tuần)
+#### Business Requirement 2: 
+Phân tích số lượng mua mã trong ngaỳ hôm đó. 
+xác định: 
+- Xem giá tăng có real không.
+- xem có volume nào bất thường không.
+#### Business Requirement 3: 
+Phân tích và xem xu hướng của cổ phiếu. 
+xác định cổ phiếu:  
+-  Đang có uptrend/downtrend không 
+- có bị overbought không. 
 
 
-Lệnh để vào postgresql trên container: 
-```cmd
-docker exec -it postgres psql -U admin -d vn30_db
 
-```
+
+
 
 
 
