@@ -16,7 +16,12 @@ logger = logging.getLogger(__name__)
 HDFS_URL = os.getenv('HDFS_URL', 'http://namenode:9870')
 HADOOP_USER = os.getenv('HADOOP_USER_NAME', 'root')
 BRONZE_PATH = "/user/vn30/bronze"
-LOCAL_DATA_PATH = os.getenv('LOCAL_DATA_PATH', '/opt/airflow/data/raw')
+# Lấy đường dẫn gốc của dự án (thư mục chứa file script này)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Tự động tạo thư mục 'data/bronze' ngay trong project
+LOCAL_DATA_PATH = os.path.join(BASE_DIR, "data", "bronze")
+# Khi gọi tạo thư mục, thêm exist_ok=True để không bị lỗi nếu thư mục đã tồn tại
+os.makedirs(LOCAL_DATA_PATH, exist_ok=True)
 
 # --- CẤU HÌNH THỜI GIAN ---
 START_DATE = "2020-01-01"
