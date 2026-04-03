@@ -72,7 +72,16 @@ Lệnh để vào postgresql trên docker:
 ```
 docker exec -it postgres psql -U admin -d vn30_db
 ```
+
+cần thực hiện những bước này để  chạy dự án.
 sửa lại file init.sql 
 ```
 docker exec -i postgres psql -U admin -d vn30_db < docker/postgres/init.sql
+```
+
+
+Do có sửa file dockerfile của treamlit nên cần build lại file này: 
+```
+docker compose up --build -d streamlit
+
 ```
