@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY . .
 
-RUN pip install streamlit pandas psycopg2-binary
+RUN pip install streamlit pandas psycopg2-binary plotly
 
 CMD ["streamlit", "run", "app.py", "--server.address=0.0.0.0"]
