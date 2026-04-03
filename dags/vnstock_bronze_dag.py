@@ -47,12 +47,31 @@ def write_partitioned(hdfs_client: InsecureClient, symbol: str, df: pd.DataFrame
 
     Trả về số lượng partition đã ghi.
     """
+    if df is None or df.empty:
+        return 0
+
     # Xác định cột ngày (vnstock trả về cột 'time')
     date_col = 'time' if 'time' in df.columns else df.columns[0]
     df = df.copy()
     df['_date'] = pd.to_datetime(df[date_col]).dt.strftime('%Y-%m-%d')
 
-    pass
+    count = 0
+    for date_val, group in df.groupby('_date'):
+        hdfs_dir = f"{BRONZE_PATH}/symbol={symbol}/date={date_val}"
+        hdfs_file = f"{hdfs_dir}/data.csv"
+        
+        # Bỏ cột phụ trợ trước khi lưu
+        save_df = group.drop(columns=['_date'])
+        
+        try:
+            hdfs_client.makedirs(hdfs_dir)
+            with hdfs_client.write(hdfs_file, encoding='utf-8', overwrite=True) as writer:
+                save_df.to_csv(writer, index=False)
+            count += 1
+        except Exception as e:
+            logger.error(f"Lỗi ghi HDFS cho {symbol} ngày {date_val}: {e}")
+            
+    return count
 
 
 # ===========================================================
@@ -112,12 +131,10 @@ def task_full_load(**context):
                 local_file = os.path.join(LOCAL_DATA_PATH, f"{symbol}_raw.csv")
                 df.to_csv(local_file, index=False)
 
-                # 2. Ghi thẳng 1 file RAW duy nhất lên HDFS (nhanh gấp 100 lần)
-                hdfs_file = f"{BRONZE_PATH}/{symbol}_raw.csv"
-                with client.write(hdfs_file, encoding='utf-8', overwrite=True) as writer:
-                    df.to_csv(writer, index=False)
+                # 2. Ghi partitioned lên HDFS
+                parts = write_partitioned(client, symbol, df)
                 
-                logger.info(f"✅ {symbol}: {len(df)} dòng → lưu HDFS thành công")
+                logger.info(f"✅ {symbol}: {len(df)} dòng → lưu HDFS thành công ({parts} partitions)")
                 success.append(symbol)
             else:
                 logger.warning(f"⚠️  {symbol}: Không có dữ liệu")
@@ -179,13 +196,10 @@ def task_incremental_ingest(**context):
                 file_exists = os.path.exists(local_file)
                 df.to_csv(local_file, mode='a', header=not file_exists, index=False)
 
-                # 2. Upload file Raw hoàn chỉnh mới nhất đè lên HDFS
+                # 2. Upload partitioned data (chỉ tải ngày mới) lên HDFS
                 if client:
-                    hdfs_file = f"{BRONZE_PATH}/{symbol}_raw.csv"
-                    df_full = pd.read_csv(local_file)
-                    with client.write(hdfs_file, encoding='utf-8', overwrite=True) as writer:
-                        df_full.to_csv(writer, index=False)
-                    logger.info(f"✅ {symbol}: Cập nhật HDFS ({len(df_full)} dòng)")
+                    parts = write_partitioned(client, symbol, df)
+                    logger.info(f"✅ {symbol}: Cập nhật HDFS thành công ({len(df)} dòng, {parts} partitions)")
                 else:
                     logger.info(f"✅ {symbol}: update local only")
 
