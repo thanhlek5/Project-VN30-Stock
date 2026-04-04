@@ -145,10 +145,12 @@ services:
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
       - JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
       - HADOOP_USER_NAME=root
+      - NOTIFY_EMAIL=${NOTIFY_EMAIL}
     volumes:
       - ./dags:/opt/airflow/dags
       - ./src:/opt/airflow/src
       - ./data:/opt/airflow/data
+      - ./logs:/opt/airflow/logs
       - ./config/airflow.cfg:/opt/airflow/airflow.cfg
     ports:
       - "8081:8080"
@@ -171,10 +173,12 @@ services:
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
       - JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
       - HADOOP_USER_NAME=root
+      - NOTIFY_EMAIL=${NOTIFY_EMAIL}
     volumes:
       - ./dags:/opt/airflow/dags
       - ./src:/opt/airflow/src
       - ./data:/opt/airflow/data
+      - ./logs:/opt/airflow/logs
       - ./config/airflow.cfg:/opt/airflow/airflow.cfg
     depends_on:
       - airflow-webserver
